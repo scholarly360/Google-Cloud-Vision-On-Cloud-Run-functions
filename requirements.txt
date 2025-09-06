@@ -1,0 +1,9 @@
+fastapi
+vellox
+google-genai
+httpx
+google-cloud-vision 
+pypdf 
+python-multipart 
+uvicorn[standard] 
+google-cloud-storage
