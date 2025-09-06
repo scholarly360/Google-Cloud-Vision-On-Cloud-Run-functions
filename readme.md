@@ -1,6 +1,8 @@
 
 # From Zero to Vertex AI: Google Cloud Vision on Cloud Run functions
 
+![Google Cloud Vision on Cloud Run functions](snip.png)
+
 Google Cloud Vision is a machine learning service offered by Google Cloud Platform that provides powerful image analysis capabilities through pre-trained models and APIs. It can extracts text from images, including handwritten text, signs, documents, and text in various languages. It can detect both printed and handwritten text
 
 While Document AI is complex, Cloud Vision API OCR is quick OCR for images & simple PDFs
@@ -40,29 +42,26 @@ gcloud storage buckets create gs://gcv_upload --location=asia-south1 --uniform-b
 gcloud storage buckets create gs://gcv_output --location=asia-south1 --uniform-bucket-level-access
 gcloud storage buckets create gs://gcv_vision_ocr --location=asia-south1 --uniform-bucket-level-access
 
-
-
 ### run locally
 uvicorn main:app --reload --port 8080
 
 ### Deploy with ENV, Variables
-gcloud functions deploy gcv-fastapi --gen2 --region=asia-south1 --runtime=python313 --entry-point=handler --trigger-http --allow-unauthenticated --memory=2GiB --timeout=600s --set-env-vars=UPLOAD_BUCKET=gcv_upload,OUTPUT_BUCKET=gcv_output,OUTPUT_ROOT=gcv_vision_ocr,API_BEARER_TOKENS=wow1234
+gcloud functions deploy gcv-fastapi --gen2 --region=asia-south1 --runtime=python313 --entry-point=handler --trigger-http --allow-unauthenticated --memory=2GiB --timeout=600s --set-env-vars=UPLOAD_BUCKET=gcv_upload,OUTPUT_BUCKET=gcv_output,OUTPUT_ROOT=gcv_vision_ocr,API_BEARER_TOKENS=your-bearer-token
 
 ### Delete when Done
 
 gcloud functions delete gcv-fastapi --region=asia-south1 --gen2
 
-
-### Check remotely
+## Check remotely
 
 BASE=some-url
-# 1) Start the async job
+### 1) Start the async job
 curl -s -X POST "$BASE/ocr/async/start" -F "file=@/path/to/big.pdf"  
 
-# 2) Poll status
+### 2) Poll status
 curl -s "$BASE/ocr/async/status?operation=projects/.../operations/abcd..."  
                                                                                ↓
-# 3) Fetch results once done
+### 3) Fetch results once done
 curl -s "$BASE/ocr/async/result?prefix=gs://YOUR_OUTPUT_BUCKET/vision-ocr/jobs/<id>/"  
 
 
